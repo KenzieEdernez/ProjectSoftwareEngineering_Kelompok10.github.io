@@ -7,3 +7,107 @@
 *{
   font-family: 'Poppins', sans-serif;
 }
+
+.AddMovie-input{
+  border: 1px solid black;
+  border-radius: 5px;
+}
+
+
+.addmovie-container{
+  display: flex;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 42%;
+  flex-wrap: wrap;
+  height: 700px;
+  margin: auto;
+  margin-top: 5.5%;
+  justify-content: space-around;
+  padding: 50px;
+  padding-top: 70px;
+  padding-bottom: 200px;
+  
+
+  
+}
+.addmovie-container-inner{
+
+  width: 50%;
+  font-size: 1em;
+  height: 100px;
+  display: flex;
+  flex-direction: column;
+  
+}
+.addmovie-container-inner input{
+  width: 90%;
+}
+.addmovie-container-inner2 input{
+  width: 90%;
+  margin-right: 30px;
+}
+
+
+.addmovie-container-inner2{
+
+  width: 50%;
+  font-size: 1em;
+  height: 100px;
+  display: flex;
+  flex-direction: row;
+  
+}
+.addmovie-container-inner3{
+  display: flex;
+  flex-direction: column;
+
+ 
+}
+.add-images-btn{
+  border: none;
+  padding: 5px 10px;
+  border-radius: 7px;
+  background-color: hsla(0, 0%, 50%, 0.476);
+  font-size: 0.7em;
+  width: 100%;
+  height: 25px;
+  transition: background-color 0.2s ease;
+ 
+}
+.add-images-btn:hover{
+ 
+  background-color: hsla(0, 0%, 50%, 0.634);
+
+}
+
+.addmovie-container-textarea{
+
+  width: 100%;
+  font-size: 1em;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+
+}
+
+
+.AddMovie-textarea{
+  border: 1px solid;
+  height: 100vh;
+  border-radius: 5px;
+}
+
+.add-movie-btn{
+  background-color: hsl(215, 100%, 63%);
+  width: 150px;
+  height: 50px;
+  border-radius: 25px;
+  margin-left: 500px;
+  margin-top: 45px;
+  color: white;
+  transition: background-color 0.2s ease;
+}
+.add-movie-btn:hover{
+  background-color: hsla(225, 77%, 56%, 0.935);
+ 
+}
