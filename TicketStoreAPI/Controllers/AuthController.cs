@@ -25,19 +25,6 @@ namespace TicketStoreAPI.Controllers
             _configuration = configuration;
         }
 
-        [HttpGet("getallclaims")]
-        public IActionResult GetAllClaim()
-        {
-            var claims = User.Claims.Select(c => new {c.Type, c.Value}).ToList();
-            var name = User.FindFirstValue("name");
-            if (claims.Count == 0)
-            {
-                return Unauthorized("Not found");
-            }
-            return Ok(name);
-        }
-
-
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
@@ -70,7 +57,7 @@ namespace TicketStoreAPI.Controllers
 
             var token = GenerateJwtToken(newUser);
 
-            return Ok(new 
+            return Ok(new
             {
                 UserId = newUser.UsersId,
                 FirstName = newUser.FirstName,
@@ -103,7 +90,7 @@ namespace TicketStoreAPI.Controllers
 
             var token = GenerateJwtToken(user);
 
-            return Ok(new 
+            return Ok(new
             {
                 UserId = user.UsersId,
                 FirstName = user.FirstName,
@@ -115,10 +102,10 @@ namespace TicketStoreAPI.Controllers
 
         private string HashPassword(string password)
         {
-            var salt = new byte[16]; 
+            var salt = new byte[16];
             using (var rng = RandomNumberGenerator.Create())
             {
-                rng.GetBytes(salt); 
+                rng.GetBytes(salt);
             }
 
             var hash = KeyDerivation.Pbkdf2(
@@ -127,7 +114,7 @@ namespace TicketStoreAPI.Controllers
                 prf: KeyDerivationPrf.HMACSHA256,
                 iterationCount: 10000,
                 numBytesRequested: 256 / 8);
-            
+
             var saltAndHash = new byte[salt.Length + hash.Length];
             Buffer.BlockCopy(salt, 0, saltAndHash, 0, salt.Length);
             Buffer.BlockCopy(hash, 0, saltAndHash, salt.Length, hash.Length);
