@@ -12,7 +12,7 @@ export const NavbarAdmin = () => {
           </li>
           <div className="flex space-x-4">
             <li>
-              <a onClick={() => navigate("/admin/addmovie")} href="" className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Add Movie</a>
+              <a onClick={() => navigate("/admin/")} href="" className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Add Movie</a>
             </li>
             <li>
               <a onClick={() => navigate('/admin/editmovie')} href="" className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Edit Movie</a>
