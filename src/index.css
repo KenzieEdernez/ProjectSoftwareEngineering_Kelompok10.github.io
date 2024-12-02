@@ -11,6 +11,7 @@
 .AddMovie-input{
   border: 1px solid black;
   border-radius: 5px;
+  padding-left: 5px;
 }
 
 
@@ -31,7 +32,6 @@
   
 }
 .addmovie-container-inner{
-
   width: 50%;
   font-size: 1em;
   height: 100px;
@@ -95,6 +95,8 @@
   border: 1px solid;
   height: 100vh;
   border-radius: 5px;
+  padding-left: 10px;
+  padding-top: 5px;
 }
 
 .add-movie-btn{
@@ -110,4 +112,69 @@
 .add-movie-btn:hover{
   background-color: hsla(225, 77%, 56%, 0.935);
  
+}
+
+.delete-movie-btn{
+  background-color: hsl(0, 100%, 51%);
+  width: 150px;
+  height: 50px;
+  border-radius: 25px;
+  margin-left: 500px;
+  margin-top: 45px;
+  color: white;
+  transition: background-color 0.2s ease;
+}
+.delete-movie-btn:hover{
+  background-color: hsl(0, 95%, 43%);
+ 
+}
+
+.delete-container{
+  display: flex;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 42%;
+  flex-wrap: wrap;
+  height: 420px;
+  margin: auto;
+  margin-top: 7.5%;
+  justify-content: space-around;
+  padding: 50px;
+  padding-top: 70px;
+  padding-bottom: 200px;
+  
+
+  
+}
+
+.view-header{
+  margin-top: 30px;
+  display: flex;
+  justify-content: space-around;
+  background-color: hsla(0, 0%, 50%, 0.51);
+  height: 50px;
+  align-items: center;
+  margin-bottom: 10px;
+
+}
+
+.view-header span{
+
+ width: 100%;
+ text-align: center;
+}
+
+.movie-info{
+ 
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 50px;
+  background-color: hsla(0, 0%, 50%, 0.51);
+  border-bottom: 1px solid;
+}
+
+.movie-info-inner{
+  /* border: 1px solid; */
+  width: 100%;
+  text-align: center;
 }
