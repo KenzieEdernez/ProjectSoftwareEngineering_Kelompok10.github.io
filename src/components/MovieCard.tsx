@@ -8,8 +8,8 @@ interface MovieCardProps {
 export const MovieCard: React.FC<MovieCardProps> = ({ imagePath, title }) => {
   return (
     <div className="flex flex-col justify-center items-center">
-      <img className="w-60 rounded-lg" src={imagePath} alt={title} />
-      <a className="text-center mt-2" href="#">{title}</a>
+      <img className="rounded-lg cursor-pointer" src={imagePath} alt={title} />
+      <a className="text-center mt-2 cursor-pointer font-semibold" href="#">{title}</a>
     </div>
   );
 };

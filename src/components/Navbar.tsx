@@ -9,7 +9,6 @@ export const Navbar = () => {
   return (
     <header>
       {isLoggedIn ? <NavbarUser username={username}/> : <NavbarGuest/>}
-
     </header>
   );
 };
