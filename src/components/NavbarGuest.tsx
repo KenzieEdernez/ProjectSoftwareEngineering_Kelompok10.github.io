@@ -1,9 +1,8 @@
-interface NavbarGuestProps {
-  onLoginClick: () => void;
-  onRegisterClick: () => void;
-}
+import { useNavigate } from "react-router-dom";
 
-export const NavbarGuest= ({onLoginClick, onRegisterClick}: NavbarGuestProps) => {
+export const NavbarGuest= () => {
+  const navigate = useNavigate();
+
   return (
     <nav className="bg-gray-800 p-4">
       <ul className="flex items-center justify-between mx-20">
@@ -13,13 +12,13 @@ export const NavbarGuest= ({onLoginClick, onRegisterClick}: NavbarGuestProps) =>
           </li>
           <div className="flex space-x-4">
             <li>
-              <a href="/" className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Now Playing</a>
+              <a onClick={() => navigate("/")} href="" className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Now Playing</a>
             </li>
             <li>
-              <a href="/" className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Up Coming</a>
+              <a onClick={() => navigate('/upcoming')} href="" className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Up Coming</a>
             </li>
             <li>
-              <a href="/" className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Theaters</a>
+              <a onClick={() => {navigate('/theaters')}} href="" className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Theaters</a>
             </li>
           </div>
         </div>
@@ -30,10 +29,10 @@ export const NavbarGuest= ({onLoginClick, onRegisterClick}: NavbarGuestProps) =>
           </div>
           <div className="flex space-x-4">
             <li>
-              <button onClick={onLoginClick} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Login</button>
+              <button onClick={() => {navigate('/login')}} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Login</button>
             </li>
             <li>
-              <button onClick={onRegisterClick} className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Register</button>
+              <button  onClick={() => {navigate('/register')}} className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Register</button>
             </li>
           </div>
         </div>

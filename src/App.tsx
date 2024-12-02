@@ -1,29 +1,22 @@
-import { useState } from "react";
-import { Navbar } from "./components/Navbar";
 import { Register } from "./pages/Register";
-import "./App.css";
 import { Login } from "./pages/Login";
+import { NowPlaying } from "./pages/NowPlaying";
+import { UpComing } from "./pages/UpComing";
+import { Theaters } from "./pages/Theaters";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import "./App.css";
 
 const App = () => {
-  const [showLogin, setShowLogin] = useState(false);
-  const [showRegister, setShowRegister] = useState(false);
-
-  const handleLoginClick = () => {
-    setShowRegister(false);
-    setShowLogin(true);
-  };
-
-  const handleRegisterClick = () => {
-    setShowLogin(false);
-    setShowRegister(true);
-  }
-
   return (
-    <>
-      <Navbar onLoginClick={handleLoginClick} onRegisterClick={handleRegisterClick}/>
-      {showLogin && <Login />}
-      {showRegister && <Register />}
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route index element={<NowPlaying />} />
+        <Route path="upcoming" element={<UpComing />} />
+        <Route path="theaters" element={<Theaters />} />
+        <Route path="login" element={<Login />} />
+        <Route path="register" element={<Register />} />
+      </Routes>
+    </BrowserRouter>
   );
 };
 

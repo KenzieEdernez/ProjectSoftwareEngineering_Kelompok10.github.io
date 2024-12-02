@@ -2,17 +2,13 @@ import React, { useState } from 'react';
 import { NavbarGuest } from './NavbarGuest';
 import { NavbarUser } from './NavbarUser';
 
-interface NavbarProps {
-  onLoginClick: () => void;
-  onRegisterClick: () => void;
-}
-
-export const Navbar: React.FC<NavbarProps> = ({ onLoginClick, onRegisterClick }) => {
+export const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState('JohnDoe');
+  
   return (
     <header>
-      {isLoggedIn ? <NavbarUser username={username}/> : <NavbarGuest onLoginClick={onLoginClick} onRegisterClick={onRegisterClick}/>}
+      {isLoggedIn ? <NavbarUser username={username}/> : <NavbarGuest/>}
 
     </header>
   );

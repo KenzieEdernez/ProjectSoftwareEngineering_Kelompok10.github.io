@@ -1,8 +1,12 @@
+import { useNavigate } from "react-router-dom";
+
 interface NavbarUserProps {
   username: string;
 }
 
 export const NavbarUser: React.FC<NavbarUserProps> = ({username}) => {
+  const navigate = useNavigate(); 
+
   return (
     <nav className="bg-gray-800 p-4">
       <ul className="flex items-center justify-between mx-20">
@@ -12,13 +16,13 @@ export const NavbarUser: React.FC<NavbarUserProps> = ({username}) => {
           </li>
           <div className="flex space-x-4">
             <li>
-              <a href="/" className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Now Playing</a>
+              <a onClick={() => navigate("/")} href="/" className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Now Playing</a>
             </li>
             <li>
-              <a href="/" className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Up Coming</a>
+              <a onClick={() => navigate("/upcoming")} href="/" className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Up Coming</a>
             </li>
             <li>
-              <a href="/" className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Theaters</a>
+              <a onClick={() => navigate("/theathers")} href="/" className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Theaters</a>
             </li>
           </div>
         </div>
@@ -30,7 +34,7 @@ export const NavbarUser: React.FC<NavbarUserProps> = ({username}) => {
           <div className="flex items-center">
             <li className="flex items-center">
               <i className="fa-solid fa-user text-gray-300"></i>
-              <a href="/" className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">{username}</a>
+              <a onClick={() => {navigate('/')}} href="/" className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">{username}</a>
             </li>
           </div>
         </div>
