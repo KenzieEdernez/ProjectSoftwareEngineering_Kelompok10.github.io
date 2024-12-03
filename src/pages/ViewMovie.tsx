@@ -72,7 +72,7 @@ function ViewMovie(){
                     <span>Movie Title</span>
                     <span>Theater ID</span>
                     <span>Theater Name</span>
-                    <span>SHowtime</span>
+                    <span>Showtime</span>
                     <span>Ticket Price</span>
                 </div>
                 {movies.map((movie, index) => (
