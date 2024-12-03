@@ -20,7 +20,6 @@ namespace TicketStoreAPI.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         public async Task<ActionResult<ResponseModel<object>>> GetTheaters()
         {
             var theaters = await _context.Theaters.ToListAsync();
@@ -67,18 +66,19 @@ namespace TicketStoreAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles="Admin")]
         public async Task<ActionResult<ResponseModel<Theater>>> PostTheater(TheaterCreateDTO dto)
         {
             var theater = new Theater
             {
-                TheatersName = dto.TheaterName,
+                Name = dto.TheaterName,
                 Capacity = dto.Capacity
             };
 
             _context.Theaters.Add(theater);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetTheater), new { id = theater.TheatersId }, new ResponseModel<Theater>
+            return CreatedAtAction(nameof(GetTheater), new { id = theater.TheaterId }, new ResponseModel<Theater>
             {
                 StatusCode = StatusCodes.Status201Created,
                 RequestMethod = HttpContext.Request.Method,
@@ -87,6 +87,7 @@ namespace TicketStoreAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles="Admin")]
         public async Task<ActionResult<ResponseModel<string>>> DeleteTheater(int id)
         {
             var theater = await _context.Theaters.FindAsync(id);

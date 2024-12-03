@@ -4,6 +4,7 @@ using TicketStoreAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using TicketStoreAPI.Models.request;
 using TicketStoreAPI.Models.Response;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TicketStoreAPI.Controllers
 {
@@ -69,9 +70,10 @@ namespace TicketStoreAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles="Admin")]
         public async Task<ActionResult<ResponseModel<Seat>>> PostSeat(SeatCreateDTO dto)
         {
-            if (!await _context.Theaters.AnyAsync(t => t.TheatersId == dto.TheaterId))
+            if (!await _context.Theaters.AnyAsync(t => t.TheaterId == dto.TheaterId))
             {
                 return BadRequest(new ResponseModel<string>
                 {
@@ -141,6 +143,7 @@ namespace TicketStoreAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles="Admin")]
         public async Task<ActionResult<ResponseModel<string>>> DeleteSeat(int id)
         {
             var seat = await _context.Seats.FindAsync(id);

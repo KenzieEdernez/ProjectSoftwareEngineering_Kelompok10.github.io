@@ -44,9 +44,9 @@ namespace TicketStoreAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles="Admin")]
         public async Task<ActionResult<ResponseModel<Movie>>> PostMovie(MovieCreatesDto dto)
         {
-            // Validate the incoming movie data (if necessary)
             if (string.IsNullOrWhiteSpace(dto.Title) || string.IsNullOrWhiteSpace(dto.Genre))
             {
                 return BadRequest(new ResponseModel<string>
@@ -71,7 +71,7 @@ namespace TicketStoreAPI.Controllers
             _context.Movies.Add(movie);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetMovies), new { id = movie.MoviesId }, new ResponseModel<Movie>
+            return CreatedAtAction(nameof(GetMovies), new { id = movie.MovieId }, new ResponseModel<Movie>
             {
                 StatusCode = StatusCodes.Status201Created,
                 RequestMethod = HttpContext.Request.Method,
@@ -80,6 +80,7 @@ namespace TicketStoreAPI.Controllers
         }
 
         [HttpDelete("{index}")]
+        [Authorize(Roles="Admin")]
         public async Task<IActionResult> DeleteUser(int id)
         {
             var movie = await _context.Movies.FindAsync(id);

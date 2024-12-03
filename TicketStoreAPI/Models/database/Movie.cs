@@ -1,20 +1,32 @@
+// Models/Movie.cs
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-namespace TicketStoreAPI.Models;
 
 public class Movie
 {
     [Key]
-    [Column("movies_id")]
-    public int MoviesId { get; set; }
+    public int MovieId { get; set; }
+
+    [Required]
     public string Title { get; set; }
+
+    [Required]
     public string Genre { get; set; }
+
+    [Required]
     public int Duration { get; set; }
+
+    [Required]
     public decimal Rating { get; set; }
+
+    [Required]
     public string Description { get; set; }
-    [Column("poster_url")]
+
+    [Required]
     public string PosterUrl { get; set; }
-    [Column("release_date")]
+
     public DateTime? ReleaseDate { get; set; }
+
+    public ICollection<Schedule> Schedules { get; set; }
 }

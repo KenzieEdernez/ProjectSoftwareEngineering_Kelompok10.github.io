@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using TicketStoreAPI.Models.request;
 using TicketStoreAPI.Models.Response;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TicketStoreAPI.Controllers
 {

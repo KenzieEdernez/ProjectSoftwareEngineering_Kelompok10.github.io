@@ -1,14 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using TicketStoreAPI.Data;
-using TicketStoreAPI.Models;
-using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using Microsoft.AspNetCore.Identity;
 using TicketStoreAPI.Models.request;
-using System.Security.Cryptography;
 
 namespace TicketStoreAPI.Controllers
 {
@@ -16,12 +12,17 @@ namespace TicketStoreAPI.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly TicketStoreAPIContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
 
-        public AuthController(TicketStoreAPIContext context, IConfiguration configuration)
+        public AuthController(
+            UserManager<ApplicationUser> userManager,
+            RoleManager<IdentityRole> roleManager,
+            IConfiguration configuration)
         {
-            _context = context;
+            _userManager = userManager;
+            _roleManager = roleManager;
             _configuration = configuration;
         }
 
@@ -33,38 +34,50 @@ namespace TicketStoreAPI.Controllers
                 return BadRequest("Invalid request");
             }
 
-            var existingUser = await _context.Users
-                .FirstOrDefaultAsync(u => u.Email == model.Email);
+            if (!await _roleManager.RoleExistsAsync("USER"))
+            {
+                return StatusCode(500, "User role does not exist.");
+            }
+
+            var existingUser = await _userManager.FindByEmailAsync(model.Email);
 
             if (existingUser != null)
             {
                 return BadRequest("Email is already taken");
             }
 
-            var hashedPassword = HashPassword(model.Password);
-
-            var newUser = new User
+            var newUser = new ApplicationUser
             {
+                Email = model.Email,
                 FirstName = model.FirstName,
                 LastName = model.LastName,
-                Email = model.Email,
-                Password = hashedPassword,
-                Phone = model.Phone
+                UserName = model.UserName,
+                PhoneNumber = model.Phone,
             };
 
-            _context.Users.Add(newUser);
-            await _context.SaveChangesAsync();
+            var result = await _userManager.CreateAsync(newUser, model.Password);
 
-            var token = GenerateJwtToken(newUser);
-
-            return Ok(new
+            if (result.Succeeded)
             {
-                UserId = newUser.UsersId,
-                FirstName = newUser.FirstName,
-                LastName = newUser.LastName,
-                Email = newUser.Email,
-                Token = token
-            });
+                var roleResult = await _userManager.AddToRoleAsync(newUser, "USER");
+
+                if (roleResult.Succeeded)
+                {
+                    var token = await GenerateJwtToken(newUser);
+
+                    return Ok(new
+                    {
+                        Token = token
+                    });
+                }
+                else
+                {
+                    await _userManager.DeleteAsync(newUser);
+                    return BadRequest(roleResult.Errors);
+                }
+            }
+
+            return BadRequest(result.Errors);
         }
 
         [HttpPost("login")]
@@ -75,77 +88,38 @@ namespace TicketStoreAPI.Controllers
                 return BadRequest("Invalid request");
             }
 
-            var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Email == model.Email);
+            var user = await _userManager.FindByEmailAsync(model.Email);
 
             if (user == null)
             {
-                return Unauthorized("Invalid email or password not found");
+                return Unauthorized("Invalid email or password.");
             }
 
-            if (!VerifyPassword(model.Password, user.Password))
+            var isPasswordValid = await _userManager.CheckPasswordAsync(user, model.Password);
+
+            if (!isPasswordValid)
             {
-                return Unauthorized("Invalid email or password wrong pass");
+                return Unauthorized("Invalid email or password.");
             }
 
-            var token = GenerateJwtToken(user);
+            var token = await GenerateJwtToken(user);
 
             return Ok(new
             {
-                UserId = user.UsersId,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email,
                 Token = token
             });
         }
 
-        private string HashPassword(string password)
+        private async Task<string> GenerateJwtToken(ApplicationUser user)
         {
-            var salt = new byte[16];
-            using (var rng = RandomNumberGenerator.Create())
+            var userRoles = await _userManager.GetRolesAsync(user);
+            var authClaims = new List<Claim>
             {
-                rng.GetBytes(salt);
-            }
-
-            var hash = KeyDerivation.Pbkdf2(
-                password: password,
-                salt: salt,
-                prf: KeyDerivationPrf.HMACSHA256,
-                iterationCount: 10000,
-                numBytesRequested: 256 / 8);
-
-            var saltAndHash = new byte[salt.Length + hash.Length];
-            Buffer.BlockCopy(salt, 0, saltAndHash, 0, salt.Length);
-            Buffer.BlockCopy(hash, 0, saltAndHash, salt.Length, hash.Length);
-
-            return Convert.ToBase64String(saltAndHash);
-        }
-
-        private bool VerifyPassword(string enteredPassword, string storedPassword)
-        {
-            var storedHashBytes = Convert.FromBase64String(storedPassword);
-            var salt = new byte[16];
-            Buffer.BlockCopy(storedHashBytes, 0, salt, 0, 16);
-            var originalHash = new byte[storedHashBytes.Length - 16];
-            Buffer.BlockCopy(storedHashBytes, 16, originalHash, 0, originalHash.Length);
-            var enteredPasswordHash = KeyDerivation.Pbkdf2(
-                password: enteredPassword,
-                salt: salt,
-                prf: KeyDerivationPrf.HMACSHA256,
-                iterationCount: 10000,
-                numBytesRequested: 256 / 8);
-
-            return CryptographicOperations.FixedTimeEquals(originalHash, enteredPasswordHash);
-        }
-
-        private string GenerateJwtToken(User user)
-        {
-            var claims = new[]
-            {
-                new Claim(JwtRegisteredClaimNames.Name, $"{user.UsersId}"),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                new Claim(JwtRegisteredClaimNames.Name, user.Id),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             };
+
+            authClaims.AddRange(userRoles.Select(role => new Claim(ClaimTypes.Role, role)));
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -153,8 +127,8 @@ namespace TicketStoreAPI.Controllers
             var token = new JwtSecurityToken(
                 issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Audience"],
-                claims: claims,
-                expires: DateTime.Now.AddMinutes(30),
+                claims: authClaims,
+                expires: DateTime.UtcNow.AddMinutes(30),
                 signingCredentials: creds
             );
 

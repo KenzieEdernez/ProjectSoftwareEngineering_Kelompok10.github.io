@@ -1,20 +1,21 @@
-using System;
+// Models/Seat.cs
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
-namespace TicketStoreAPI.Models;
 
 public class Seat
 {
     [Key]
-    [Column("seats_id")]
     public int SeatId { get; set; }
-    [Column("theater_id")]
+
+    [Required]
     public int TheaterId { get; set; }
-    [Column("seat_number")]
+
+    [Required]
     public string SeatNumber { get; set; }
 
-    [JsonIgnore]
+    [ForeignKey("TheaterId")]
     public Theater Theater { get; set; }
+
     public ICollection<BookingSeat> BookingSeats { get; set; }
 }

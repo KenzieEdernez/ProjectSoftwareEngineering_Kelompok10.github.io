@@ -1,28 +1,31 @@
+// Models/Schedule.cs
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
-namespace TicketStoreAPI.Models;
 
 public class Schedule
 {
     [Key]
-    [Column("schedules_id")]
-    public int SchedulesId { get; set; }
-    [Column("movie_id")]
+    public int ScheduleId { get; set; }
+
+    [Required]
     public int MovieId { get; set; }
-    [Column("theater_id")]
+
+    [Required]
     public int TheaterId { get; set; }
-    [Column("show_time")]
+
+    [Required]
     public DateTime ShowTime { get; set; }
+
+    [Required]
     public decimal Price { get; set; }
 
-    [JsonIgnore]
+    [ForeignKey("MovieId")]
     public Movie Movie { get; set; }
 
-    [JsonIgnore]
+    [ForeignKey("TheaterId")]
     public Theater Theater { get; set; }
 
-    [JsonIgnore]
     public ICollection<Booking> Bookings { get; set; }
 }

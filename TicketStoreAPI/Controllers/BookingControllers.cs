@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TicketStoreAPI.Data;
-using TicketStoreAPI.Models;
 using TicketStoreAPI.Models.request;
 using TicketStoreAPI.Models.Response;
 
@@ -26,7 +25,7 @@ namespace TicketStoreAPI.Controllers
         {
             var userIdString = User.FindFirstValue("name");
 
-            if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out int userId))
+            if (string.IsNullOrEmpty(userIdString))
             {
                 return Unauthorized(new ResponseModel<string>
                 {
@@ -44,7 +43,7 @@ namespace TicketStoreAPI.Controllers
                 .Include(b => b.User)
                 .Include(b => b.BookingSeats)
                     .ThenInclude(bs => bs.Seat)
-                .Where(c => c.UserId == userId) 
+                .Where(c => c.UserId == userIdString)
                 .ToListAsync();
 
 
@@ -70,9 +69,9 @@ namespace TicketStoreAPI.Controllers
         [Authorize]
         public async Task<ActionResult<ResponseModel<object>>> GetBooking(int id)
         {
-            var userIdString = User.FindFirstValue("name");
+            var userIdString = User.FindFirstValue("nameid");
 
-            if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out int userId))
+            if (string.IsNullOrEmpty(userIdString))
             {
                 return Unauthorized(new ResponseModel<string>
                 {
@@ -102,7 +101,7 @@ namespace TicketStoreAPI.Controllers
                 });
             }
 
-            if (booking.UserId != userId)
+            if (booking.UserId != userIdString)
             {
                 return Unauthorized(new ResponseModel<string>
                 {
@@ -124,9 +123,9 @@ namespace TicketStoreAPI.Controllers
         [Authorize]
         public async Task<ActionResult<ResponseModel<Booking>>> PostBooking(BookingCreateDTO bookingCreateDto)
         {
-            var userIdString = User.FindFirstValue("name");
+            var userIdString = User.FindFirstValue("nameid");
 
-            if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out int userId))
+            if (string.IsNullOrEmpty(userIdString))
             {
                 return Unauthorized(new ResponseModel<string>
                 {
@@ -146,7 +145,7 @@ namespace TicketStoreAPI.Controllers
                 });
             }
 
-            if (!await _context.Schedules.AnyAsync(s => s.SchedulesId == bookingCreateDto.ScheduleId))
+            if (!await _context.Schedules.AnyAsync(s => s.ScheduleId == bookingCreateDto.ScheduleId))
             {
                 return BadRequest(new ResponseModel<string>
                 {
@@ -156,7 +155,7 @@ namespace TicketStoreAPI.Controllers
                 });
             }
 
-            if (!await _context.Users.AnyAsync(u => u.UsersId == bookingCreateDto.UserId))
+            if (!await _context.Users.AnyAsync(u => u.Id == bookingCreateDto.UserId))
             {
                 return BadRequest(new ResponseModel<string>
                 {
@@ -166,7 +165,7 @@ namespace TicketStoreAPI.Controllers
                 });
             }
 
-            if (bookingCreateDto.UserId != userId)
+            if (bookingCreateDto.UserId != userIdString)
             {
                 return Unauthorized(new ResponseModel<string>
                 {
@@ -185,23 +184,24 @@ namespace TicketStoreAPI.Controllers
                 CreatedAt = DateTime.UtcNow
             };
 
+
             _context.Bookings.Add(booking);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetBooking), new { id = booking.BookingId }, new ResponseModel<Booking>
+            return CreatedAtAction(nameof(GetBooking), new { id = booking.BookingId }, new ResponseModel<String>
             {
-                StatusCode = StatusCodes.Status201Created,
+                StatusCode = StatusCodes.Status200OK,
                 RequestMethod = HttpContext.Request.Method,
-                Data = booking
+                Data = "Booking done successfully."
             });
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult<ResponseModel<string>>> DeleteBooking(int id)
         {
-            var userIdString = User.FindFirstValue("name");
+            var userIdString = User.FindFirstValue("nameid");
 
-            if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out int userId))
+            if (string.IsNullOrEmpty(userIdString))
             {
                 return Unauthorized(new ResponseModel<string>
                 {
@@ -225,7 +225,7 @@ namespace TicketStoreAPI.Controllers
                 });
             }
 
-            if (booking.UserId != userId)
+            if (booking.UserId != userIdString)
             {
                 return Unauthorized(new ResponseModel<string>
                 {

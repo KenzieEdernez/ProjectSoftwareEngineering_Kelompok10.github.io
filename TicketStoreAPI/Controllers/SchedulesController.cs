@@ -4,6 +4,7 @@ using TicketStoreAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using TicketStoreAPI.Models.request;
 using TicketStoreAPI.Models.Response;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TicketStoreAPI.Controllers
 {
@@ -50,7 +51,7 @@ namespace TicketStoreAPI.Controllers
             var schedule = await _context.Schedules
                 .Include(s => s.Movie)
                 .Include(s => s.Theater)
-                .FirstOrDefaultAsync(s => s.SchedulesId == id);
+                .FirstOrDefaultAsync(s => s.ScheduleId == id);
 
             if (schedule == null)
             {
@@ -71,10 +72,11 @@ namespace TicketStoreAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles="Admin")]
         public async Task<ActionResult<ResponseModel<Schedule>>> PostSchedule(ScheduleCreateDTO dto)
         {
-            if (!await _context.Movies.AnyAsync(m => m.MoviesId == dto.MovieId) ||
-                !await _context.Theaters.AnyAsync(t => t.TheatersId == dto.TheaterId))
+            if (!await _context.Movies.AnyAsync(m => m.MovieId == dto.MovieId) ||
+                !await _context.Theaters.AnyAsync(t => t.TheaterId == dto.TheaterId))
             {
                 return BadRequest(new ResponseModel<string>
                 {
@@ -95,7 +97,7 @@ namespace TicketStoreAPI.Controllers
             _context.Schedules.Add(schedule);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetSchedule), new { id = schedule.SchedulesId }, new ResponseModel<Schedule>
+            return CreatedAtAction(nameof(GetSchedule), new { id = schedule.ScheduleId }, new ResponseModel<Schedule>
             {
                 StatusCode = StatusCodes.Status201Created,
                 RequestMethod = HttpContext.Request.Method,
@@ -103,47 +105,8 @@ namespace TicketStoreAPI.Controllers
             });
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult<ResponseModel<string>>> PutSchedule(int id, Schedule dto)
-        {
-            if (id != dto.SchedulesId)
-            {
-                return BadRequest(new ResponseModel<string>
-                {
-                    StatusCode = StatusCodes.Status400BadRequest,
-                    RequestMethod = HttpContext.Request.Method,
-                    Data = "Schedule ID mismatch."
-                });
-            }
-
-            var schedule = await _context.Schedules.FindAsync(id);
-            if (schedule == null)
-            {
-                return NotFound(new ResponseModel<string>
-                {
-                    StatusCode = StatusCodes.Status404NotFound,
-                    RequestMethod = HttpContext.Request.Method,
-                    Data = $"Schedule with ID {id} not found."
-                });
-            }
-
-            schedule.MovieId = dto.MovieId;
-            schedule.TheaterId = dto.TheaterId;
-            schedule.ShowTime = dto.ShowTime;
-            schedule.Price = dto.Price;
-
-            _context.Entry(schedule).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-
-            return Ok(new ResponseModel<string>
-            {
-                StatusCode = StatusCodes.Status200OK,
-                RequestMethod = HttpContext.Request.Method,
-                Data = "Schedule updated successfully."
-            });
-        }
-
         [HttpDelete("{id}")]
+        [Authorize(Roles="Admin")]
         public async Task<ActionResult<ResponseModel<string>>> DeleteSchedule(int id)
         {
             var schedule = await _context.Schedules.FindAsync(id);

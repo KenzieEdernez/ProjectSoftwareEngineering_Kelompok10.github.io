@@ -1,22 +1,18 @@
-using System;
+// Models/Theater.cs
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
-namespace TicketStoreAPI.Models;
 
 public class Theater
 {
     [Key]
-    [Column("theaters_id")]
-    public int TheatersId { get; set; }
-    [Column("theaters_name")]
-    public string TheatersName { get; set; }
+    public int TheaterId { get; set; }
+
+    [Required]
+    public string Name { get; set; }
+
+    [Required]
     public int Capacity { get; set; }
 
-    [JsonIgnore]
-    public ICollection<Schedule> Schedules { get; set; }
-
-    [JsonIgnore]
     public ICollection<Seat> Seats { get; set; }
+    public ICollection<Schedule> Schedules { get; set; }
 }
-
