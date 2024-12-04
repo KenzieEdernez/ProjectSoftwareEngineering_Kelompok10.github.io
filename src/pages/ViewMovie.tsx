@@ -2,7 +2,7 @@
 import { useEffect } from "react";
 import {NavbarAdmin} from "../components/NavbarAdmin";
 import MovieInfo from "../components/MovieInfo";
-
+import axios from "axios";
 function ViewMovie(){
 
     const movies = [

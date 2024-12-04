@@ -1,4 +1,3 @@
-import React from "react";
 import { MovieCard } from "../components/MovieCard";
 import movie1 from "../assets/posters/bila_ibu_tiada.jpg";
 import movie2 from "../assets/posters/gladiator2.jpg";
@@ -13,18 +12,21 @@ const movies = [
   { imagePath: movie4, title: "Movie 4" },
 ];
 
-export const NowPlaying: React.FC = () => {
+export const NowPlaying= () => {
   return (
     <>
-      <Navbar onLoginClick={() => {}} onRegisterClick={() => {}} />
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-60">
-        {movies.map((movie, index) => (
-          <MovieCard
-            key={index}
-            imagePath={movie.imagePath}
-            title={movie.title}
-          />
-        ))}
+      <Navbar />
+      <div className="mx-40 mt-10">
+        <h1 className="text-3xl text-start font-bold mb-10">NOW PLAYING IN CINEMAS</h1>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {movies.map((movie, index) => (
+            <MovieCard
+              key={index}
+              imagePath={movie.imagePath}
+              title={movie.title}
+            />
+          ))}
+        </div>
       </div>
     </>
   );

@@ -53,7 +53,10 @@ function EditMovie(){
                 </div>
 
                 <div className="addmovie-container-inner2">
-                 
+                      <div className="addmovie-container-inner3">
+                        <label htmlFor="">Edit Ticket Price</label>
+                        <input type="text" className="AddMovie-input"/>
+                    </div>
                     <div className="addmovie-container-inner3">
                         <label htmlFor="">Movie Poster</label>
                         <button onClick={handleAddPoster} className="add-images-btn">Add Images</button>
