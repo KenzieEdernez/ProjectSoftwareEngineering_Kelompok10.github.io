@@ -76,7 +76,7 @@ function ViewMovie(){
                     <span>Ticket Price</span>
                 </div>
                 {movies.map((movie, index) => (
-                   
+
                         <MovieInfo
                             key={index}
                             scheduleId={movie.scheduleId}
