@@ -210,3 +210,106 @@
   margin-left: 10px;
   
 }
+
+.movie-desc-container{
+  margin-top: 2%;
+    box-shadow: 5px 4px 16px rgba(0, 0, 0, 0.1);
+   height: 650px;
+   display: flex;
+   gap: 5%;
+   background-color: hsla(0, 0%, 72%, 0.106);
+  
+}
+
+.movie-desc-container img{
+  margin-left: 50px;
+  width: 400px;
+  height: 550px;
+}
+.movie-desc-inner{
+  margin-top: 5%;
+  font-size: 1.3em;
+  
+}
+.movie-desc-inner h3{
+  /* margin-top: 5%; */
+  font-size: 1.7em;
+  /* border: 1px solid; */
+  
+  
+}
+
+.movie-desc-synopsis{
+  min-height: 200px;
+  max-height: 200px;
+  /* border: 1px solid; */
+  overflow-y: auto;
+  
+}
+
+.theatre-list-container{
+  /* margin-top: 2%; */
+  font-size: 1.5em;
+  position: relative;
+  /* border: 1px solid; */
+}
+.theatres{
+  /* display: flex; */
+  margin: 20px;
+ 
+}
+
+.theatre{
+  margin-bottom: 20px;
+  border-bottom: 1px solid;
+}
+
+.theatre ul{
+  display: flex;
+  gap: 35px;
+  margin: 10px;
+  font-size: 0.7em;
+  
+}
+.theatre button{
+text-align: center;
+border: 1px solid hsl(231, 97%, 54%);
+border-radius: 10px;
+min-width: 100px;
+padding: 5px;
+margin-bottom: 10px;
+transition: background-color 0.2s ease-out;
+
+}
+.theatre h4{
+  font-size: 1.2em;
+opacity: 0.7;
+}
+.theatre button:hover{
+  
+  border: 1px solid hsl(231, 97%, 54%);
+  background-color: hsla(220, 97%, 56%, 0.798);
+  color: white;
+  }
+
+
+.selected-info{
+  /* border: 1px solid; */
+  width: 15%;
+  position: absolute;
+  right: 0;
+  top: 15px;
+  font-size: 0.8em;
+  opacity: 0.8;
+  
+}
+
+.buy-ticket{
+  border: 1px solid;
+  width: 120px;
+  padding: 7px;
+  color: white;
+  border-radius: 10px;
+  margin-top: 10px;
+  background-color: hsla(220, 99%, 55%, 0.825);
+}
