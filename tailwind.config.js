@@ -4,7 +4,10 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Poppins", "Roboto", "sans-serif"], 
+        sans: ["Poppins", "Roboto", "sans-serif"],
+      },
+      colors: {
+        darkBlue: "#03002e",
       },
     },
   },
