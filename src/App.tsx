@@ -11,6 +11,7 @@ import ViewMovie  from "./pages/ViewMovie";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import ChooseSeats from "./pages/ChooseSeats";
+import { OrderDetail } from "./pages/OrderDetail";
 
 const App = () => {
   return (
@@ -28,6 +29,7 @@ const App = () => {
         <Route path="/admin/viewmovie" element={<ViewMovie />} />
 
         <Route path="/seats" element={<ChooseSeats/>}/>
+        <Route path="/orderdetail" element={<OrderDetail/>} />
       </Routes>
     </BrowserRouter>
   );

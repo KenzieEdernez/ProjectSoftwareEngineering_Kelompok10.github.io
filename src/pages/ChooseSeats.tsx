@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const ChooseSeats: React.FC = () => {
+  const navigate = useNavigate();
   const rows = 7;
   const columns = 9;
   const seatPrice = 50000;
@@ -35,7 +37,7 @@ const ChooseSeats: React.FC = () => {
           <div
             key={`${row}-${col}`}
             className={`w-8 h-8 m-1 rounded flex items-center justify-center cursor-pointer text-white ${
-              isSelected ? "bg-yellow-400 text-gray-800 " : "bg-gray-800"
+              isSelected ? "bg-yellow-400 text-blue-950 " : "bg-gray-800"
             }`}
             onClick={() => handleSeatClick(seatLabel)}
           >
@@ -47,10 +49,22 @@ const ChooseSeats: React.FC = () => {
     return seats;
   };
 
+  const handleOrderDetail = () => {
+    navigate('/orderdetail', {
+      state: {
+        movieTitle: 'Moana 2',
+        theaterName: 'CGV: Central Park, Jakarta Barat',
+        time: '01 DES 2024, 18:00',
+        selectedSeats,
+        totalPrice,
+      },
+    });
+  };
+
   return (
     <div className="bg-darkBlue h-screen p-5">
       <header className="mb-10">
-        <button className="bg-yellow-400 rounded px-3 py-2 flex items-center gap-x-2 my-4">
+        <button className="bg-yellow-400 rounded px-3 py-2 flex items-center gap-x-2 my-4 font-semibold">
           <i className="fa-solid fa-arrow-left text-blue-950"></i>
           Back
         </button>
@@ -87,7 +101,7 @@ const ChooseSeats: React.FC = () => {
         </div>
 
         {/* booking info container */}
-        <div className="mt-4 lg:mt-0 lg:ml-8 text-white bg-gray-800 p-4 rounded-lg shadow-lg w-full lg:w-1/4 flex flex-col justify-between">
+        <div className="mt-4 lg:mt-0 lg:ml-8 text-white bg-gray-800 bg-opacity-60 p-4 rounded-lg shadow-lg w-full lg:w-1/4 flex flex-col justify-between">
           <div>
             <p className="font-semibold text-lg mb-2">Your booking info: </p>
             <div>
@@ -96,7 +110,7 @@ const ChooseSeats: React.FC = () => {
                 {selectedSeats.map((seat) => (
                   <div
                     key={seat}
-                    className="m-1 p-1 bg-yellow-400 rounded text-gray-800"
+                    className="m-1 p-1 bg-yellow-400 rounded text-blue-950"
                   >
                     {seat}
                   </div>
@@ -107,7 +121,7 @@ const ChooseSeats: React.FC = () => {
 
           <div className="flex justify-between items-center">
             <p>Total Price: Rp {totalPrice}</p>
-            <button className="rounded text-blue-950 bg-yellow-400 px-3 py-1">
+            <button className="rounded text-blue-950 bg-yellow-400 px-3 py-1" onClick={handleOrderDetail}>
               Order Detail
             </button>
           </div>
