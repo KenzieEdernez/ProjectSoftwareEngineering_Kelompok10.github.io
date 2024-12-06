@@ -1,0 +1,16 @@
+Nama Aplikasi : quick tix
+
+Nama Kelompok :
+1. 2702296142 - Kenzie Edernez
+2. 2702229264 - Andhika Pratama Putra
+3. 2702243110 - Yoseph Oktavianus Yusanto
+4. 2702340156 - Kevin Pangsawira
+
+Penjelasan Singkat :
+Aplikasi ini dirancang untuk memudahkan user dalam pemesanan ticket, yang dimana user bisa melihat film yang sedang ditayang dan akan ditayang. Dan user perlu melakukan login agar bisa mengakses atau melakukan transaksi.
+
+Link PPT :
+https://www.canva.com/design/DAGYZImWklI/i0rrQjqItm5FudUDvqGDAQ/edit
+
+Link GitHub :
+https://github.com/KenzieEdernez/ProjectSoftwareEngineering_Kelompok10.git
