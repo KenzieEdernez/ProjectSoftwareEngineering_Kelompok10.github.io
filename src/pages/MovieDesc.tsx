@@ -36,6 +36,14 @@ const movieData: Record<string, MovieDataProps> = {
       { name: "Cinema E", showtimes: ["10:30", "11:30", "12:30"] },
     ],
   },
+  "Movie 4": {
+    duration: 125,
+    synopsis: "Lorem ipsum dolor sit amet, consectetur adipisicing elit...",
+    rating: "⭐⭐⭐⭐⭐",
+    theaters: [
+      { name: "Cinema E", showtimes: ["10:30", "11:30", "12:30"] },
+    ],
+  },
 };
 
 const MovieDesc: React.FC = () => {
@@ -74,7 +82,7 @@ const MovieDesc: React.FC = () => {
 
           {movie && (
             <>
-              <div style={{ display: 'flex', gap: '20px' }}>
+              <div style={{ display: 'flex', gap: '100px', opacity: '0.7' }}>
                 <b>Duration: {movie.duration} Minutes</b>
                 <b>Rating: {movie.rating}</b>
               </div>
