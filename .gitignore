@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Logs
 logs
 *.log
@@ -22,3 +23,31 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+=======
+bin/
+obj/
+*.exe
+*.dll
+*.pdb
+*.cache
+*.config
+ScaffoldingReadMe.txt
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+.vs/
+.vscode/
+*.csproj.user
+*.nupkg
+**/packages/*
+[Bb]uild[Ll]og.*
+.DS_Store
+Thumbs.db
+*.log
+appsettings.*.json
+!appsettings.json
+.idea/
+$RECYCLE.BIN/
+publish/
+>>>>>>> 44dd0861fdf08086564790689702fbfaffd62d6b
