@@ -12,5 +12,8 @@ Aplikasi ini dirancang untuk memudahkan user dalam pemesanan ticket, yang dimana
 Link PPT :
 https://www.canva.com/design/DAGYZImWklI/i0rrQjqItm5FudUDvqGDAQ/edit
 
+Link DOCX :
+https://docs.google.com/document/d/1vn2kGvCI_YzM2XDHOQbQcT8_SRUPLY0M7k4b50z-Y2w/edit?tab=t.0
+
 Link GitHub :
 https://github.com/KenzieEdernez/ProjectSoftwareEngineering_Kelompok10.git
