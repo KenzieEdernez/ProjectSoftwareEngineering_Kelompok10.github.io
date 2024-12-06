@@ -28,7 +28,6 @@ namespace TicketStoreAPI.Controllers
                 .ToListAsync();
             List<ScheduleResponse> response = new List<ScheduleResponse>();
 
-
             if (!schedules.Any())
             {
                 return NotFound(new ResponseModel<string>
@@ -50,7 +49,6 @@ namespace TicketStoreAPI.Controllers
                     TheaterId = s.TheaterId
                 };
                 response.Add(temp);
-
             }
 
             return Ok(new ResponseModel<IEnumerable<ScheduleResponse>>
@@ -88,6 +86,93 @@ namespace TicketStoreAPI.Controllers
             };
 
             return Ok(new ResponseModel<ScheduleResponse>
+            {
+                StatusCode = StatusCodes.Status200OK,
+                RequestMethod = HttpContext.Request.Method,
+                Data = response
+            });
+        }
+
+        [HttpGet("Upcoming")]
+        public async Task<ActionResult<ResponseModel<object>>> GetUpcomingSchedules()
+        {
+            var currentDateTime = DateTime.UtcNow;
+            var upcomingSchedules = await _context.Schedules
+                .Include(s => s.Movie)
+                .Include(s => s.Theater)
+                .Where(s => s.ShowTime > currentDateTime)
+                .ToListAsync();
+
+            List<ScheduleResponse> response = new List<ScheduleResponse>();
+
+            if (!upcomingSchedules.Any())
+            {
+                return NotFound(new ResponseModel<string>
+                {
+                    StatusCode = StatusCodes.Status404NotFound,
+                    RequestMethod = HttpContext.Request.Method,
+                    Data = "No upcoming movie found."
+                });
+            }
+
+            foreach (Schedule s in upcomingSchedules)
+            {
+                var temp = new ScheduleResponse
+                {
+                    MovieId = s.MovieId,
+                    Price = s.Price,
+                    SchedulesId = s.ScheduleId,
+                    ShowTime = s.ShowTime,
+                    TheaterId = s.TheaterId
+                };
+                response.Add(temp);
+            }
+
+            return Ok(new ResponseModel<IEnumerable<ScheduleResponse>>
+            {
+                StatusCode = StatusCodes.Status200OK,
+                RequestMethod = HttpContext.Request.Method,
+                Data = response
+            });
+        }
+
+        [HttpGet("Today")]
+        public async Task<ActionResult<ResponseModel<object>>> GetTodaySchedules()
+        {
+            var today = DateTime.UtcNow.Date;
+            var tomorrow = today.AddDays(1);
+            var todaysSchedules = await _context.Schedules
+                .Include(s => s.Movie)
+                .Include(s => s.Theater)
+                .Where(s => s.ShowTime >= today && s.ShowTime < tomorrow)
+                .ToListAsync();
+
+            List<ScheduleResponse> response = new List<ScheduleResponse>();
+
+            if (!todaysSchedules.Any())
+            {
+                return NotFound(new ResponseModel<string>
+                {
+                    StatusCode = StatusCodes.Status404NotFound,
+                    RequestMethod = HttpContext.Request.Method,
+                    Data = "No Movies playing today."
+                });
+            }
+
+            foreach (Schedule s in todaysSchedules)
+            {
+                var temp = new ScheduleResponse
+                {
+                    MovieId = s.MovieId,
+                    Price = s.Price,
+                    SchedulesId = s.ScheduleId,
+                    ShowTime = s.ShowTime,
+                    TheaterId = s.TheaterId
+                };
+                response.Add(temp);
+            }
+
+            return Ok(new ResponseModel<IEnumerable<ScheduleResponse>>
             {
                 StatusCode = StatusCodes.Status200OK,
                 RequestMethod = HttpContext.Request.Method,
