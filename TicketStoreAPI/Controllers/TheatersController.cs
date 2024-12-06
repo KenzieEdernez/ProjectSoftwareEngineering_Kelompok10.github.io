@@ -23,6 +23,7 @@ namespace TicketStoreAPI.Controllers
         public async Task<ActionResult<ResponseModel<object>>> GetTheaters()
         {
             var theaters = await _context.Theaters.ToListAsync();
+            List<TheaterResponse> response = new List<TheaterResponse>();
 
             if (!theaters.Any())
             {
@@ -34,11 +35,22 @@ namespace TicketStoreAPI.Controllers
                 });
             }
 
-            return Ok(new ResponseModel<IEnumerable<Theater>>
+            foreach (Theater t in theaters)
+            {
+                var temp = new TheaterResponse
+                {
+                    Capacity = t.Capacity,
+                    TheatersName = t.Name,
+                    TheatersId = t.TheaterId
+                };
+                response.Add(temp);
+            }
+
+            return Ok(new ResponseModel<IEnumerable<TheaterResponse>>
             {
                 StatusCode = StatusCodes.Status200OK,
                 RequestMethod = HttpContext.Request.Method,
-                Data = theaters
+                Data = response
             });
         }
 
@@ -57,16 +69,23 @@ namespace TicketStoreAPI.Controllers
                 });
             }
 
-            return Ok(new ResponseModel<Theater>
+            var response = new TheaterResponse
+            {
+                Capacity = theater.Capacity,
+                TheatersName = theater.Name,
+                TheatersId = theater.TheaterId
+            };
+
+            return Ok(new ResponseModel<TheaterResponse>
             {
                 StatusCode = StatusCodes.Status200OK,
                 RequestMethod = HttpContext.Request.Method,
-                Data = theater
+                Data = response
             });
         }
 
         [HttpPost]
-        [Authorize(Roles="Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<ResponseModel<Theater>>> PostTheater(TheaterCreateDTO dto)
         {
             var theater = new Theater
@@ -78,16 +97,16 @@ namespace TicketStoreAPI.Controllers
             _context.Theaters.Add(theater);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetTheater), new { id = theater.TheaterId }, new ResponseModel<Theater>
+            return Ok(new ResponseModel<string>
             {
                 StatusCode = StatusCodes.Status201Created,
                 RequestMethod = HttpContext.Request.Method,
-                Data = theater
+                Data = "Theater added successfully"
             });
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles="Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<ResponseModel<string>>> DeleteTheater(int id)
         {
             var theater = await _context.Theaters.FindAsync(id);

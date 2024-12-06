@@ -1,5 +1,3 @@
-using System;
-
 namespace TicketStoreAPI.Models.request;
 
 public class TheaterCreateDTO

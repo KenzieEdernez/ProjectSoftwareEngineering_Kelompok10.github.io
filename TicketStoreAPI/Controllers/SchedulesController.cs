@@ -26,6 +26,8 @@ namespace TicketStoreAPI.Controllers
                 .Include(s => s.Movie)
                 .Include(s => s.Theater)
                 .ToListAsync();
+            List<ScheduleResponse> response = new List<ScheduleResponse>();
+
 
             if (!schedules.Any())
             {
@@ -37,11 +39,25 @@ namespace TicketStoreAPI.Controllers
                 });
             }
 
-            return Ok(new ResponseModel<IEnumerable<Schedule>>
+            foreach (Schedule s in schedules)
+            {
+                var temp = new ScheduleResponse
+                {
+                    MovieId = s.MovieId,
+                    Price = s.Price,
+                    SchedulesId = s.ScheduleId,
+                    ShowTime = s.ShowTime,
+                    TheaterId = s.TheaterId
+                };
+                response.Add(temp);
+
+            }
+
+            return Ok(new ResponseModel<IEnumerable<ScheduleResponse>>
             {
                 StatusCode = StatusCodes.Status200OK,
                 RequestMethod = HttpContext.Request.Method,
-                Data = schedules
+                Data = response
             });
         }
 
@@ -62,17 +78,25 @@ namespace TicketStoreAPI.Controllers
                     Data = $"Schedule with ID {id} not found."
                 });
             }
+            var response = new ScheduleResponse
+            {
+                MovieId = schedule.MovieId,
+                Price = schedule.Price,
+                SchedulesId = schedule.ScheduleId,
+                ShowTime = schedule.ShowTime,
+                TheaterId = schedule.TheaterId
+            };
 
-            return Ok(new ResponseModel<Schedule>
+            return Ok(new ResponseModel<ScheduleResponse>
             {
                 StatusCode = StatusCodes.Status200OK,
                 RequestMethod = HttpContext.Request.Method,
-                Data = schedule
+                Data = response
             });
         }
 
         [HttpPost]
-        [Authorize(Roles="Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<ResponseModel<Schedule>>> PostSchedule(ScheduleCreateDTO dto)
         {
             if (!await _context.Movies.AnyAsync(m => m.MovieId == dto.MovieId) ||
@@ -97,16 +121,16 @@ namespace TicketStoreAPI.Controllers
             _context.Schedules.Add(schedule);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetSchedule), new { id = schedule.ScheduleId }, new ResponseModel<Schedule>
+            return Ok(new ResponseModel<string>
             {
                 StatusCode = StatusCodes.Status201Created,
                 RequestMethod = HttpContext.Request.Method,
-                Data = schedule
+                Data = "Schedule added successfully"
             });
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles="Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<ResponseModel<string>>> DeleteSchedule(int id)
         {
             var schedule = await _context.Schedules.FindAsync(id);

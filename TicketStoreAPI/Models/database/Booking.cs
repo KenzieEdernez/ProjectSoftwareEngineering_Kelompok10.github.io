@@ -1,6 +1,3 @@
-// Models/Booking.cs
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -19,7 +16,7 @@ public class Booking
     public decimal TotalPrice { get; set; }
 
     [Required]
-    public byte BookingStatus { get; set; } 
+    public byte BookingStatus { get; set; }
 
     [Required]
     public DateTime CreatedAt { get; set; }
