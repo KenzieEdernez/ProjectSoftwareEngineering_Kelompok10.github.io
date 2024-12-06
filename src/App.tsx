@@ -7,6 +7,7 @@ import AddMovie  from "./pages/AddMovie";
 import EditMovie  from "./pages/EditMovie";
 import DeleteMovie  from "./pages/DeleteMovie";
 import ViewMovie  from "./pages/ViewMovie";
+import MovieDesc  from "./pages/MovieDesc";
 
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
@@ -23,13 +24,14 @@ const App = () => {
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
 
+        <Route path="/moviedesc/:title" element={<MovieDesc />} />
         <Route path="/admin/" element={<AddMovie />} />
         <Route path="/admin/editmovie" element={<EditMovie />} />
         <Route path="/admin/deletemovie" element={<DeleteMovie />} />
         <Route path="/admin/viewmovie" element={<ViewMovie />} />
 
-        <Route path="/seats" element={<ChooseSeats/>}/>
-        <Route path="/orderdetail" element={<OrderDetail/>} />
+        <Route path="/chooseseats/:title" element={<ChooseSeats/>}/>
+        <Route path="/orderdetail/:title" element={<OrderDetail/>} />
       </Routes>
     </BrowserRouter>
   );

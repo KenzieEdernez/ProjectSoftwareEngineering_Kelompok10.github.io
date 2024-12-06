@@ -1,11 +1,14 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 const ChooseSeats: React.FC = () => {
   const navigate = useNavigate();
   const rows = 7;
   const columns = 9;
   const seatPrice = 50000;
+  const { title } = useParams<{ title: string }>();
+  const location = useLocation();
+  const { imagePath, theaterName, time } = location.state || {};
 
   const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
   const [totalPrice, setTotalPrice] = useState(0);
@@ -50,13 +53,32 @@ const ChooseSeats: React.FC = () => {
   };
 
   const handleOrderDetail = () => {
-    navigate('/orderdetail', {
+    if (selectedSeats.length > 0) {
+      navigate(`/orderdetail/${title}`, {
+        state: {
+          imagePath,
+          movieTitle: title,
+          theaterName,
+          time,
+          selectedSeats,
+          totalPrice,
+        },
+      });
+    }
+  };
+
+  // useEffect(() => {
+  //   if (!theaterName || !time) {
+  //     navigate('/');
+  //   }
+  // }, [theaterName, time, navigate]);
+
+  const handleBackClick = () => {
+    navigate(`/moviedesc/${title}`, {
       state: {
-        movieTitle: 'Moana 2',
-        theaterName: 'CGV: Central Park, Jakarta Barat',
-        time: '01 DES 2024, 18:00',
-        selectedSeats,
-        totalPrice,
+        imagePath,
+        theaterName,
+        time,
       },
     });
   };
@@ -64,14 +86,15 @@ const ChooseSeats: React.FC = () => {
   return (
     <div className="bg-darkBlue h-screen p-5">
       <header className="mb-10">
-        <button className="bg-yellow-400 rounded px-3 py-2 flex items-center gap-x-2 my-4 font-semibold">
+        <button
+          onClick={handleBackClick}
+          className="bg-yellow-400 rounded px-3 py-2 flex items-center gap-x-2 my-4 font-semibold"
+        >
           <i className="fa-solid fa-arrow-left text-blue-950"></i>
           Back
         </button>
-        <div className="text-yellow-400  font-bold text-2xl">
-          CGV: Central Park, Jakarta Barat
-        </div>
-        <p className="text-yellow-400">01 Des | 18:00</p>
+        <div className="text-yellow-400  font-bold text-2xl">{theaterName}</div>
+        <p className="text-yellow-400">{time}</p>
       </header>
 
       <div className="flex flex-col justify-evenly lg:flex-row">
@@ -121,7 +144,10 @@ const ChooseSeats: React.FC = () => {
 
           <div className="flex justify-between items-center">
             <p>Total Price: Rp {totalPrice}</p>
-            <button className="rounded text-blue-950 bg-yellow-400 px-3 py-1" onClick={handleOrderDetail}>
+            <button
+              className="rounded text-blue-950 bg-yellow-400 px-3 py-1"
+              onClick={handleOrderDetail}
+            >
               Order Detail
             </button>
           </div>
