@@ -95,6 +95,40 @@ namespace TicketStoreAPI.Controllers
             });
         }
 
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ResponseModel<object>>> GetMovie(int id)
+        {
+            var movie = await _context.Movies.Where(m => m.MovieId == id).FirstOrDefaultAsync();
+
+            if (movie == null)
+            {
+                return NotFound(new ResponseModel<string>
+                {
+                    StatusCode = StatusCodes.Status404NotFound,
+                    RequestMethod = HttpContext.Request.Method,
+                    Data = $"Movie with ID {id} not found."
+                });
+            }
+            var response = new MovieResponse
+            {
+                Description = movie.Description,
+                Duration = movie.Duration,
+                Genre = movie.Genre,
+                MoviesId = movie.MovieId,
+                PosterUrl = movie.PosterUrl,
+                Rating = movie.Rating,
+                ReleaseDate = movie.ReleaseDate,
+                Title = movie.Title,
+            };
+
+            return Ok(new ResponseModel<MovieResponse>
+            {
+                StatusCode = StatusCodes.Status200OK,
+                RequestMethod = HttpContext.Request.Method,
+                Data = response
+            });
+        }
+
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteUser(int id)
