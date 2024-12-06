@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Navbar from "../components/Navbar";
-import TicketInfo from "../components/TicketInfo"; // Import the TicketInfo component
+import TicketInfo from "../components/TIcketInfo"; // Import the TicketInfo component
 
 interface Ticket {
   id: number;
