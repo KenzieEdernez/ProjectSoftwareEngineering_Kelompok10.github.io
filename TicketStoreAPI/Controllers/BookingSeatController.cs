@@ -127,6 +127,7 @@ namespace TicketStoreAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<ResponseModel<BookingSeat>>> PostBookingSeat(BookingSeatCreateDTO dto)
         {
             if (!await _context.Bookings.AnyAsync(b => b.BookingId == dto.BookingId) ||
