@@ -2,7 +2,7 @@ namespace TicketStoreAPI.Models;
 
 public class UserResponse
 {
-    public int UsersId { get; set; }
+    public string UsersId { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public string Email { get; set; }

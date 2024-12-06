@@ -25,7 +25,7 @@ namespace TicketStoreAPI.Controllers
             var seats = await _context.Seats
                 .Include(s => s.Theater)
                 .ToListAsync();
-
+            List<SeatResponse> response = new List<SeatResponse>();
             if (!seats.Any())
             {
                 return NotFound(new ResponseModel<string>
@@ -36,11 +36,22 @@ namespace TicketStoreAPI.Controllers
                 });
             }
 
-            return Ok(new ResponseModel<IEnumerable<Seat>>
+            foreach (Seat s in seats)
+            {
+                var temp = new SeatResponse
+                {
+                    SeatNumber = s.SeatNumber,
+                    TheaterId = s.TheaterId,
+                    SeatsId = s.SeatId
+                };
+                response.Add(temp);
+            }
+
+            return Ok(new ResponseModel<IEnumerable<SeatResponse>>
             {
                 StatusCode = StatusCodes.Status200OK,
                 RequestMethod = HttpContext.Request.Method,
-                Data = seats
+                Data = response
             });
         }
 
@@ -61,16 +72,23 @@ namespace TicketStoreAPI.Controllers
                 });
             }
 
-            return Ok(new ResponseModel<Seat>
+            var response = new SeatResponse
+            {
+                SeatNumber = seat.SeatNumber,
+                SeatsId = seat.SeatId,
+                TheaterId = seat.TheaterId
+            };
+
+            return Ok(new ResponseModel<SeatResponse>
             {
                 StatusCode = StatusCodes.Status200OK,
                 RequestMethod = HttpContext.Request.Method,
-                Data = seat
+                Data = response
             });
         }
 
         [HttpPost]
-        [Authorize(Roles="Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<ResponseModel<Seat>>> PostSeat(SeatCreateDTO dto)
         {
             if (!await _context.Theaters.AnyAsync(t => t.TheaterId == dto.TheaterId))
@@ -92,58 +110,17 @@ namespace TicketStoreAPI.Controllers
             _context.Seats.Add(seat);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetSeat), new { id = seat.SeatId }, new ResponseModel<SeatResponse>
+            return Ok(new ResponseModel<string>
             {
                 StatusCode = StatusCodes.Status201Created,
                 RequestMethod = HttpContext.Request.Method,
-                Data = new SeatResponse{
-                    SeatsId = seat.SeatId,
-                    TheaterId = seat.TheaterId,
-                    SeatNumber = seat.SeatNumber
-                }
+                Data = "Seat added successfully"
             });
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult<ResponseModel<string>>> PutSeat(int id, Seat dto)
-        {
-            if (id != dto.SeatId)
-            {
-                return BadRequest(new ResponseModel<string>
-                {
-                    StatusCode = StatusCodes.Status400BadRequest,
-                    RequestMethod = HttpContext.Request.Method,
-                    Data = "Seat ID mismatch."
-                });
-            }
-
-            var seat = await _context.Seats.FindAsync(id);
-            if (seat == null)
-            {
-                return NotFound(new ResponseModel<string>
-                {
-                    StatusCode = StatusCodes.Status404NotFound,
-                    RequestMethod = HttpContext.Request.Method,
-                    Data = $"Seat with ID {id} not found."
-                });
-            }
-
-            seat.TheaterId = dto.TheaterId;
-            seat.SeatNumber = dto.SeatNumber;
-
-            _context.Entry(seat).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-
-            return Ok(new ResponseModel<string>
-            {
-                StatusCode = StatusCodes.Status200OK,
-                RequestMethod = HttpContext.Request.Method,
-                Data = "Seat updated successfully."
-            });
-        }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles="Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<ResponseModel<string>>> DeleteSeat(int id)
         {
             var seat = await _context.Seats.FindAsync(id);

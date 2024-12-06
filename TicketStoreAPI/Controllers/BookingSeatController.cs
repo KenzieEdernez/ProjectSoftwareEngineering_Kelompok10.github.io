@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using TicketStoreAPI.Models;
 using TicketStoreAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using TicketStoreAPI.Models.request;
@@ -21,6 +20,7 @@ namespace TicketStoreAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<ResponseModel<object>>> GetBookingSeats()
         {
             var userIdString = User.FindFirstValue("name");
@@ -38,7 +38,10 @@ namespace TicketStoreAPI.Controllers
             var bookingSeats = await _context.BookingSeats
                 .Include(bs => bs.Booking)
                 .Include(bs => bs.Seat)
+                .Where(bs => bs.Booking.UserId == userIdString)
                 .ToListAsync();
+
+            List<BookingSeatResponse> response = new List<BookingSeatResponse>();
 
             if (!bookingSeats.Any())
             {
@@ -50,17 +53,41 @@ namespace TicketStoreAPI.Controllers
                 });
             }
 
-            return Ok(new ResponseModel<IEnumerable<BookingSeat>>
+            foreach (BookingSeat bs in bookingSeats)
+            {
+                var temp = new BookingSeatResponse
+                {
+                    BookingId = bs.BookingId,
+                    BookingSeatId = bs.BookingSeatId,
+                    SeatId = bs.SeatId
+                };
+                response.Add(temp);
+            }
+
+            return Ok(new ResponseModel<IEnumerable<BookingSeatResponse>>
             {
                 StatusCode = StatusCodes.Status200OK,
                 RequestMethod = HttpContext.Request.Method,
-                Data = bookingSeats
+                Data = response
             });
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<ResponseModel<object>>> GetBookingSeat(int id)
         {
+            var userIdString = User.FindFirstValue("name");
+
+            if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out int userId))
+            {
+                return Unauthorized(new ResponseModel<string>
+                {
+                    StatusCode = StatusCodes.Status401Unauthorized,
+                    RequestMethod = HttpContext.Request.Method,
+                    Data = $"Please login again."
+                });
+            }
+
             var bookingSeat = await _context.BookingSeats
                 .Include(bs => bs.Booking)
                 .Include(bs => bs.Seat)
@@ -75,12 +102,27 @@ namespace TicketStoreAPI.Controllers
                     Data = $"Booking seat with ID {id} not found."
                 });
             }
+            if (bookingSeat.Booking.UserId != userIdString)
+            {
+                return Unauthorized(new ResponseModel<string>
+                {
+                    StatusCode = StatusCodes.Status401Unauthorized,
+                    RequestMethod = HttpContext.Request.Method,
+                    Data = $"UserId doesn't match with current user."
+                });
+            }
+            var response = new BookingSeatResponse
+            {
+                BookingId = bookingSeat.BookingId,
+                BookingSeatId = bookingSeat.BookingSeatId,
+                SeatId = bookingSeat.SeatId
+            };
 
-            return Ok(new ResponseModel<BookingSeat>
+            return Ok(new ResponseModel<BookingSeatResponse>
             {
                 StatusCode = StatusCodes.Status200OK,
                 RequestMethod = HttpContext.Request.Method,
-                Data = bookingSeat
+                Data = response
             });
         }
 
@@ -98,14 +140,15 @@ namespace TicketStoreAPI.Controllers
                 });
             }
 
-            if (await _context.BookingSeats.AnyAsync(bs => bs.SeatId == dto.SeatId)){
-                return Conflict(new ResponseModel<string>{
+            if (await _context.BookingSeats.AnyAsync(bs => bs.SeatId == dto.SeatId))
+            {
+                return Conflict(new ResponseModel<string>
+                {
                     StatusCode = StatusCodes.Status409Conflict,
                     RequestMethod = HttpContext.Request.Method,
                     Data = "Seat has been occupied."
                 });
             }
-
             var bookingSeat = new BookingSeat
             {
                 BookingId = dto.BookingId,
@@ -115,15 +158,16 @@ namespace TicketStoreAPI.Controllers
             _context.BookingSeats.Add(bookingSeat);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetBookingSeat), new { id = bookingSeat.SeatId }, new ResponseModel<BookingSeat>
+            return Ok(new ResponseModel<string>
             {
                 StatusCode = StatusCodes.Status201Created,
                 RequestMethod = HttpContext.Request.Method,
-                Data = bookingSeat
+                Data = "BookingSeat added successfully"
             });
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<ResponseModel<string>>> DeleteBookingSeat(int id)
         {
             var bookingSeat = await _context.BookingSeats.FindAsync(id);

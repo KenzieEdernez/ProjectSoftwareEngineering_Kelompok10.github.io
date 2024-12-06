@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TicketStoreAPI.Data;
+using TicketStoreAPI.Models;
 using TicketStoreAPI.Models.request;
 using TicketStoreAPI.Models.Response;
 
@@ -45,7 +46,7 @@ namespace TicketStoreAPI.Controllers
                     .ThenInclude(bs => bs.Seat)
                 .Where(c => c.UserId == userIdString)
                 .ToListAsync();
-
+            List<BookingResponse> response = new List<BookingResponse>();
 
             if (bookings == null || !bookings.Any())
             {
@@ -57,11 +58,26 @@ namespace TicketStoreAPI.Controllers
                 });
             }
 
-            return Ok(new ResponseModel<List<Booking>>
+            foreach (Booking b in bookings)
+            {
+                var temp = new BookingResponse
+                {
+                    BookingId = b.BookingId,
+                    BookingStatus = b.BookingStatus,
+                    CreatedAt = b.CreatedAt,
+                    ScheduleId = b.ScheduleId,
+                    TotalPrice = b.TotalPrice,
+                    UserId = b.UserId
+                };
+                response.Add(temp);
+            }
+
+
+            return Ok(new ResponseModel<List<BookingResponse>>
             {
                 StatusCode = StatusCodes.Status200OK,
                 RequestMethod = HttpContext.Request.Method,
-                Data = bookings
+                Data = response
             });
         }
 
@@ -69,7 +85,7 @@ namespace TicketStoreAPI.Controllers
         [Authorize]
         public async Task<ActionResult<ResponseModel<object>>> GetBooking(int id)
         {
-            var userIdString = User.FindFirstValue("nameid");
+            var userIdString = User.FindFirstValue("name");
 
             if (string.IsNullOrEmpty(userIdString))
             {
@@ -101,7 +117,7 @@ namespace TicketStoreAPI.Controllers
                 });
             }
 
-            if (booking.UserId != userIdString)
+            if (booking.UserId.ToString() != userIdString)
             {
                 return Unauthorized(new ResponseModel<string>
                 {
@@ -111,11 +127,21 @@ namespace TicketStoreAPI.Controllers
                 });
             }
 
-            return Ok(new ResponseModel<Booking>
+            var response = new BookingResponse
+            {
+                BookingId = booking.BookingId,
+                BookingStatus = booking.BookingStatus,
+                CreatedAt = booking.CreatedAt,
+                ScheduleId = booking.ScheduleId,
+                TotalPrice = booking.TotalPrice,
+                UserId = booking.UserId
+            };
+
+            return Ok(new ResponseModel<BookingResponse>
             {
                 StatusCode = StatusCodes.Status200OK,
                 RequestMethod = HttpContext.Request.Method,
-                Data = booking
+                Data = response
             });
         }
 
@@ -123,7 +149,7 @@ namespace TicketStoreAPI.Controllers
         [Authorize]
         public async Task<ActionResult<ResponseModel<Booking>>> PostBooking(BookingCreateDTO bookingCreateDto)
         {
-            var userIdString = User.FindFirstValue("nameid");
+            var userIdString = User.FindFirstValue("name");
 
             if (string.IsNullOrEmpty(userIdString))
             {
@@ -188,7 +214,7 @@ namespace TicketStoreAPI.Controllers
             _context.Bookings.Add(booking);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetBooking), new { id = booking.BookingId }, new ResponseModel<String>
+            return Ok(new ResponseModel<string>
             {
                 StatusCode = StatusCodes.Status200OK,
                 RequestMethod = HttpContext.Request.Method,
@@ -197,9 +223,10 @@ namespace TicketStoreAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<ActionResult<ResponseModel<string>>> DeleteBooking(int id)
         {
-            var userIdString = User.FindFirstValue("nameid");
+            var userIdString = User.FindFirstValue("name");
 
             if (string.IsNullOrEmpty(userIdString))
             {

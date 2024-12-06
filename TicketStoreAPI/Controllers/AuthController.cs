@@ -48,10 +48,10 @@ namespace TicketStoreAPI.Controllers
 
             var newUser = new ApplicationUser
             {
+                UserName = model.UserName,
                 Email = model.Email,
                 FirstName = model.FirstName,
                 LastName = model.LastName,
-                UserName = model.UserName,
                 PhoneNumber = model.Phone,
             };
 
@@ -59,7 +59,8 @@ namespace TicketStoreAPI.Controllers
 
             if (result.Succeeded)
             {
-                var roleResult = await _userManager.AddToRoleAsync(newUser, "USER");
+                IdentityResult roleResult;
+                roleResult = await _userManager.AddToRoleAsync(newUser, "USER");
 
                 if (roleResult.Succeeded)
                 {

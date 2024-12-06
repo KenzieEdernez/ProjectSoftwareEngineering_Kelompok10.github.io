@@ -24,6 +24,7 @@ namespace TicketStoreAPI.Controllers
         public async Task<ActionResult<ResponseModel<object>>> GetMovies()
         {
             var movies = await _context.Movies.ToListAsync();
+            List<MovieResponse> response = new List<MovieResponse>();
 
             if (!movies.Any())
             {
@@ -35,16 +36,31 @@ namespace TicketStoreAPI.Controllers
                 });
             }
 
-            return Ok(new ResponseModel<IEnumerable<Movie>>
+            foreach (Movie mov in movies)
+            {
+                var temp = new MovieResponse
+                {
+                    Title = mov.Title,
+                    Genre = mov.Genre,
+                    Duration = mov.Duration,
+                    Rating = mov.Rating,
+                    Description = mov.Description,
+                    PosterUrl = mov.PosterUrl,
+                    ReleaseDate = mov.ReleaseDate
+                };
+                response.Add(temp);
+            }
+
+            return Ok(new ResponseModel<IEnumerable<MovieResponse>>
             {
                 StatusCode = StatusCodes.Status200OK,
                 RequestMethod = HttpContext.Request.Method,
-                Data = movies
+                Data = response
             });
         }
 
         [HttpPost]
-        [Authorize(Roles="Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<ResponseModel<Movie>>> PostMovie(MovieCreatesDto dto)
         {
             if (string.IsNullOrWhiteSpace(dto.Title) || string.IsNullOrWhiteSpace(dto.Genre))
@@ -71,16 +87,16 @@ namespace TicketStoreAPI.Controllers
             _context.Movies.Add(movie);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetMovies), new { id = movie.MovieId }, new ResponseModel<Movie>
+            return Ok(new ResponseModel<string>
             {
                 StatusCode = StatusCodes.Status201Created,
                 RequestMethod = HttpContext.Request.Method,
-                Data = movie
+                Data = "Movie added successfully"
             });
         }
 
-        [HttpDelete("{index}")]
-        [Authorize(Roles="Admin")]
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteUser(int id)
         {
             var movie = await _context.Movies.FindAsync(id);
