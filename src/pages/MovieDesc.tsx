@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useParams, useLocation } from "react-router-dom";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 
 interface MovieDataProps {
@@ -37,7 +37,7 @@ const movieData: Record<string, MovieDataProps> = {
     ],
   },
   "Movie 4": {
-    duration: 125,
+    duration: 120,
     synopsis: "Lorem ipsum dolor sit amet, consectetur adipisicing elit...",
     rating: "⭐⭐⭐⭐⭐",
     theaters: [
@@ -61,6 +61,19 @@ const MovieDesc: React.FC = () => {
     setSelectedTheater(theaterName);
     setSelectedShowtime(showtime);
   };
+
+  const navigate = useNavigate();
+
+  const handleBuyClick = () => {
+    if (selectedTheater && selectedShowtime) {
+      navigate(`/chooseseats/${title}`, {
+        state: {
+          imagePath: imagePath,
+          theaterName: selectedTheater,
+          time: selectedShowtime,
+        },
+    });
+  }};
 
   return (
     <>
@@ -119,7 +132,7 @@ const MovieDesc: React.FC = () => {
             : 'bold', fontSize: '1.2em'}}>Selected Showtime</h3>
           <p><strong>Theater:</strong> {selectedTheater}</p>
           <p><strong>Time:</strong> {selectedShowtime}</p>
-            <button className="buy-ticket">Buy</button>
+            <button className="buy-ticket" onClick={handleBuyClick}>Buy</button>
         </div>
       </div>
 

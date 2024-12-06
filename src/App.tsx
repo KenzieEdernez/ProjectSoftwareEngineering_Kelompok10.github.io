@@ -12,9 +12,9 @@ import MovieDesc  from "./pages/MovieDesc";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import ChooseSeats from "./pages/ChooseSeats";
+import { OrderDetail } from "./pages/OrderDetail";
 import ChooseSeats2 from "./pages/ChooseSeats2";
 import MyTicket from "./pages/MyTicket";
-
 const App = () => {
   return (
     <BrowserRouter>
@@ -32,7 +32,8 @@ const App = () => {
         <Route path="/admin/viewmovie" element={<ViewMovie />} />
 
         <Route path="/seats" element={<ChooseSeats/>}/>
-        <Route path="/seats2" element={<ChooseSeats2/>}/>
+        <Route path="/chooseseats/:title" element={<ChooseSeats/>}/>
+        <Route path="/orderdetail/:title" element={<OrderDetail/>} />
         <Route path="/myticket" element={<MyTicket/>}/>
       </Routes>
     </BrowserRouter>
